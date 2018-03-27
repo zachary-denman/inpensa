@@ -6,7 +6,7 @@ Usage:
   inpensa.py [--journal=<file>] add category <category-name> <sub-category-name>
   inpensa.py [--journal=<file>] remove expense
   inpensa.py [--journal=<file>] remove category
-  inpensa.py show expenses
+  inpensa.py show expenses --n=<n>
   inpensa.py show categories
   inpensa.py show statistics
   inpensa.py (-h | --help)
@@ -22,6 +22,7 @@ import json
 import os
 
 import docopt
+import prettytable
 
 import journal
 
@@ -112,7 +113,7 @@ class Inpensa:
 
         if self.args['show']:
             if self.args['expenses']:
-                self.show_categories()
+                self.show_expenses()
             elif self.args['categories']:
                 self.show_categories()
             elif self.args['statistics']:
@@ -245,8 +246,30 @@ class Inpensa:
                 print('      {0:s}'.format(subcategory))
 
     def show_expenses(self):
-        """Print the expenses requested."""
-        # Probably just do a date or date range.
+        """Print last 'n' expenses - 'n' is retrieved from the --n argument.
+
+        :param int n: the number of expenses whose details will be provided.
+        """
+        print('  -- Showing last {0:s} expenses\n'.format(self.args['--n']))
+        table =  prettytable.PrettyTable()
+        table.field_names = ['Date', 'Name', 'Amount', 'Category',
+                             'Subcategory']
+        table.align['Name'] = 'l'
+        table.align['Amount'] = 'r'
+        table.align['Category'] = 'l'
+        table.align['Subcategory'] = 'l'
+        table.float_format['Amount'] = '.2'
+        n_printed = 0
+        exp = self.journal.expenses
+        for date in sorted(exp.keys(), reverse=True):
+            for name, details in sorted(exp[date].items(), reverse=True):
+                if n_printed == int(self.args['--n']):
+                    break
+                table.add_row([date, name, details['amount'],
+                              details['category'], details['subcategory']])
+                n_printed += 1
+        
+        print(table)
 
         return
 
