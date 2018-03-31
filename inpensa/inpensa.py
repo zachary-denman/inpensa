@@ -251,7 +251,7 @@ class Inpensa:
         :param int n: the number of expenses whose details will be provided.
         """
         print('  -- Showing last {0:s} expenses\n'.format(self.args['--n']))
-        table =  prettytable.PrettyTable()
+        table = prettytable.PrettyTable()
         table.field_names = ['Date', 'Name', 'Amount', 'Category',
                              'Subcategory']
         table.align['Name'] = 'l'
