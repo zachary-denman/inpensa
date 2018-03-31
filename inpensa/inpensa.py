@@ -278,9 +278,19 @@ class Inpensa:
         print('This is where the expense will be printed')
         print('== Expense statistics')
         print('  -- Calculate statistics...', end='')
+        # print(self.args)
+        today = datetime.date.today()
+        one_month = today.replace(month=today.month-1)
+        # three_month = today.month - 3
+        # six_month = today.month - 6
+        print(one_month.isoformat())
+
+        # one_month, three_month, six_month = datetime.timedelta(months=1)
         self.journal.calculate_statistics()
         print('Done')
         print('  -- Print statistics\n')
+        table = prettytable.PrettyTable()
+
 
         return
 
