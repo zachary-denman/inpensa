@@ -4,6 +4,8 @@ Author: Zachary J. Denman
 Date: 2018-03-17
 """
 
+import datetime
+import math
 import os
 
 import json
@@ -73,25 +75,43 @@ class Journal:
 
         return
 
-    def calculate_statistics(self):
+    def calculate_statistics(self, start, end):
         """Compute statistics for the journal.
 
-        The current computations are 1, 3, and 6-month totals on a per category
-        and sub-category grouping.
         """
         # Reset totals for each calculation
-        # TODO: Compute the statistics
+        dt = datetime.timedelta(days=1)
+        year, month, day = [int(item) for item in start.split('-')]
+        start_date = datetime.date(year, month, day)
+        year, month, day = [int(item) for item in end.split('-')]
+        end_date = datetime.date(year, month, day)
+
+        if start_date > end_date:
+            print('Start date after end date.')
+            return
+
+        self.statistics = {}
+        for category in self.categories.keys():
+            self.statistics[category] = {'total': 0.0,
+                                         'subcategories': {}}
+            for subcategory in self.categories[category]:
+                self.statistics[category]['subcategories'][subcategory] = 0
+        # Iterate through expenses from start adding each one to its
+        # corresponding category/subcategory total
+        date = start_date
+        while date <= end_date:
+            if date.isoformat() in self.expenses:
+                for name, details in self.expenses[date.isoformat()].items():
+                    amount = details['amount']
+                    category = details['category']
+                    subcategory = details['subcategory']
+                    self.statistics[category]['total'] += amount
+                    self.statistics[category]['subcategories'][subcategory] += amount
+            date += dt
 
         return
 
 
 if __name__ == '__main__':
-    test = Journal()
-    print(test.expenses)
-    print()
-    test.add_expense('2018-03-17', 'test', 123.45, 'Entertainment', 'Movies')
-    print(test.expenses)
-    print()
-    test.add_expense('2018-03-19', 'test', 567.89, 'Entertainment', 'Books')
-    print(test.expenses)
+    test.calculate_statistics('2018-01-01', '2018-02-28')
 
