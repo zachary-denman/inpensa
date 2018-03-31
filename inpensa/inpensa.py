@@ -207,7 +207,7 @@ class Inpensa:
         temp_categories = {}
         print('  -- Category selection')
         for i, category in enumerate(self.journal.categories.keys()):
-            print('      {0:d}) {1:s}'.format(i+1, category))
+            print('      {0: 3d}) {1:s}'.format(i+1, category))
             temp_categories[i+1] = category
         while not category_selected:
             try:
@@ -221,7 +221,7 @@ class Inpensa:
         subcategories = self.journal.categories[category]
         print('  -- Subcategory selection')
         for i, subcategory in enumerate(subcategories):
-            print('      {0:d}) {1:s}'.format(i+1, subcategory))
+            print('      {0: 3d}) {1:s}'.format(i+1, subcategory))
         while not subcategory_selected:
             try:
                 i = int(input('  -- Enter subcategory number: '))                        
